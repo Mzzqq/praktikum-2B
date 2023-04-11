@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <conio.h>
 
 using namespace std;
 
@@ -51,10 +52,10 @@ void input() {
         cin >> data[i].nilai.uts;
         cout << "Nilai UAS : ";
         cin >> data[i].nilai.uas;
-        
+
         // Menghitung nilai akhir
         data[i].nilai.akhir = (data[i].nilai.absen * 0.1) + (data[i].nilai.tugas * 0.2) + (data[i].nilai.uts * 0.3) + (data[i].nilai.uas * 0.4);
-        
+
         // Menghitung nilai huruf
         if (data[i].nilai.akhir > 80) {
             data[i].nilai.huruf = 'A';
@@ -67,6 +68,8 @@ void input() {
         }
     }
     cout << "\n" << endl;
+    system("pause");
+    system("cls");
 }
 
 // Fungsi Tampil
@@ -78,6 +81,8 @@ void tampil() {
         cout << data[i].npm << "\t" << data[i].nama << "\t" << data[i].nilai.absen << "\t" << data[i].nilai.tugas << "\t" << data[i].nilai.uts << "\t" << data[i].nilai.uas << "\t" << data[i].nilai.akhir << "\t" << data[i].nilai.huruf << endl;
     }
     cout << "\n" << endl;
+    system("pause");
+    system("cls");
 }
 
 // Fungsi Edit
@@ -101,10 +106,10 @@ void edit() {
             cin >> data[i].nilai.uts;
             cout << "Nilai UAS : ";
             cin >> data[i].nilai.uas;
-            
+
             // Menghitung nilai akhir
             data[i].nilai.akhir = (data[i].nilai.absen * 0.1) + (data[i].nilai.tugas * 0.2) + (data[i].nilai.uts * 0.3) + (data[i].nilai.uas * 0.4);
-            
+
             // Menghitung nilai huruf
             if (data[i].nilai.akhir > 80) {
                 data[i].nilai.huruf = 'A';
@@ -115,9 +120,13 @@ void edit() {
             } else {
                 data[i].nilai.huruf = 'D';
             }
+        }else{
+            cout << "NPM Tidak ditemukan" << endl;
         }
     }
     cout << "\n" << endl;
+    system("pause");
+    system("cls");
 }
 
 // Fungsi Hapus
@@ -125,22 +134,27 @@ void hapus() {
     string cari;
     cout << "\nMasukkan NPM yang akan dihapus : ";
     cin >> cari;
-    
+
     // Validasi NPM
     for (int i = 0; i < jumlah; i++) {
         if (data[i].npm == cari) {
             for (int j = i; j < jumlah; j++) {
                 data[j] = data[j + 1];
+                cout << "Data dihapus" << endl;
             }
             jumlah--;
+        }else{
+            cout << "NPM Tidak ditemukan" << endl;
         }
     }
     cout << "\n" << endl;
+    system("pause");
+    system("cls");
 }
 
 int main() {
     int pilih;
-    
+
     // Menu
     do {
         cout << "1. Input Data" << endl;
