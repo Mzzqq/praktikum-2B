@@ -1,46 +1,64 @@
 #include <iostream>
+#include <conio.h>
+#include <stdlib.h>
 
 using namespace std;
 
-int compress(char* chars, int n) {
-    int i = 0; // pointer untuk menunjuk karakter yang sedang diproses
-    int j = 0; // pointer untuk menunjuk posisi hasil kompresi yang akan ditulis
-    int count; // jumlah kemunculan karakter yang sedang diproses
+struct node
+{
+    int data;
+    node *next;
+};
 
-    while (i < n) {
-        chars[j] = chars[i]; // tulis karakter yang sedang diproses pada posisi hasil kompresi
-        count = 1; // reset jumlah kemunculan karakter
-        while (i + 1 < n && chars[i] == chars[i+1]) { // hitung kemunculan karakter
-            count++;
-            i++;
-        }
-        if (count > 1) { // jika kemunculan karakter lebih dari 1, tambahkan angka setelah karakter
-            string count_str = to_string(count);
-            for (int k = 0; k < count_str.length(); k++) {
-                chars[++j] = count_str[k];
-            }
-        }
-        i++;
-        j++;
-    }
+node *top = NULL;
 
-    return j; // kembalikan panjang array hasil kompresi
+void push(int data)
+{
+    node *temp = new node;
+    temp->data = data;
+    temp->next = top;   // menambahkan data ke atas tumpukan
+    top = temp;
 }
 
-int main() {
-    char chars[] = {'a', 'a', 'b', 'b', 'c', 'c', 'c'};
-    int n = sizeof(chars) / sizeof(chars[0]);
+void pop()
+{
+    node *temp = top;   // menyimpan data paling atas tumpukan
+    top = top->next;    // menghapus data paling atas dari tumpukan
+    delete temp;        // menghapus data dari memori
+}
 
-    int len = compress(chars, n);
-
-    cout << "Output: " << len << ", [";
-    for (int i = 0; i < len; i++) {
-        cout << "\"" << chars[i] << "\"";
-        if (i < len-1) {
-            cout << ",";
-        }
+void display()
+{
+    node *temp = top;   // menyimpan data paling atas tumpukan
+    while (temp != NULL)
+    {
+        cout << temp->data << " ";  // menampilkan data dari atas ke bawah tumpukan
+        temp = temp->next;
     }
-    cout << "]" << endl;
+    cout << endl;
+}
 
+void hanoi(int n, char from, char to, char aux)
+{
+    if (n == 1)
+    {
+        cout << "Pindahkan batu " << n * 10 << " dari " << from << " ke " << to << endl;   // kasus dasar untuk satu batu
+        return;
+    }
+    hanoi(n - 1, from, aux, to);    // pindahkan n-1 batu dari 'from' ke 'aux', menggunakan 'to' sebagai bantuan
+    cout << "Pindahkan batu " << n * 10 << " dari " << from << " ke " << to << endl;   // pindahkan batu n dari 'from' ke 'to'
+    hanoi(n - 1, aux, to, from);    // pindahkan n-1 batu dari 'aux' ke 'to', menggunakan 'from' sebagai bantuan
+}
+
+int main()
+{
+    int n = 3; // jumlah batu
+    for (int i = n; i >= 1; i--)
+    {
+        push(i);    // menambahkan batu ke tumpukan
+    }
+    cout << "Menara Hanoi dengan " << n << " batu" << endl;
+    hanoi(n, 'A', 'C', 'B');   // memindahkan batu-batu dari tiang A ke tiang C, menggunakan tiang B sebagai bantuan
+    getch();
     return 0;
 }
