@@ -1,1 +1,1 @@
-# pertemuan-1-praktikum
+# pertemuan-6-praktikum
