@@ -1,46 +1,81 @@
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
-int compress(char* chars, int n) {
-    int i = 0; // pointer untuk menunjuk karakter yang sedang diproses
-    int j = 0; // pointer untuk menunjuk posisi hasil kompresi yang akan ditulis
-    int count; // jumlah kemunculan karakter yang sedang diproses
+// Definisikan struktur Queue
+struct Queue {
+    char data;
+    Queue* next;
+};
 
-    while (i < n) {
-        chars[j] = chars[i]; // tulis karakter yang sedang diproses pada posisi hasil kompresi
-        count = 1; // reset jumlah kemunculan karakter
-        while (i + 1 < n && chars[i] == chars[i+1]) { // hitung kemunculan karakter
-            count++;
-            i++;
-        }
-        if (count > 1) { // jika kemunculan karakter lebih dari 1, tambahkan angka setelah karakter
-            string count_str = to_string(count);
-            for (int k = 0; k < count_str.length(); k++) {
-                chars[++j] = count_str[k];
-            }
-        }
-        i++;
-        j++;
+// Fungsi enqueue untuk menambahkan elemen ke dalam queue
+void enqueue(Queue** rear, Queue** front, char data) {
+    // Buat node baru
+    Queue* newNode = new Queue;
+    newNode->data = data;
+    newNode->next = NULL;
+
+    // Jika queue kosong, node baru akan menjadi node pertama dan terakhir
+    if (*rear == NULL) {
+        *rear = newNode;
+        *front = newNode;
+    } else {
+        // Jika tidak kosong, tambahkan node baru ke ujung rear
+        (*rear)->next = newNode;
+        *rear = newNode;
+    }
+}
+
+// Fungsi dequeue untuk menghapus elemen dari queue dan mengembalikan data yang dihapus
+char dequeue(Queue** front) {
+    if (*front == NULL) {
+        return '\0'; // Jika queue kosong, kembalikan karakter null
     }
 
-    return j; // kembalikan panjang array hasil kompresi
+    char data = (*front)->data;
+    Queue* temp = *front;
+    *front = (*front)->next;
+    delete temp;
+
+    return data;
+}
+
+// Fungsi is_palindrome untuk memeriksa apakah sebuah string merupakan palindrome
+bool isPalindrome(string str) {
+    Queue* rear = NULL;
+    Queue* front = NULL;
+
+    // Masukkan setengah dari string ke dalam queue
+    for (int i = 0; i < str.length() / 2; i++) {
+        enqueue(&rear, &front, str[i]);
+    }
+
+    // Jika panjang string ganjil, lewati karakter tengahnya
+    if (str.length() % 2 != 0) {
+        dequeue(&front);
+    }
+
+    // Bandingkan karakter di queue dengan karakter di sisa string
+    while (front != NULL) {
+        if (dequeue(&front) != str[str.length() - 1]) {
+            return false;
+        }
+        str.pop_back(); // Hapus karakter terakhir dari string
+    }
+
+    return true;
 }
 
 int main() {
-    char chars[] = {'a', 'a', 'b', 'b', 'c', 'c', 'c'};
-    int n = sizeof(chars) / sizeof(chars[0]);
-
-    int len = compress(chars, n);
-
-    cout << "Output: " << len << ", [";
-    for (int i = 0; i < len; i++) {
-        cout << "\"" << chars[i] << "\"";
-        if (i < len-1) {
-            cout << ",";
-        }
+    string str;
+    cout << "Masukkan string: ";
+    cin >> str;
+    
+    if (isPalindrome(str)) {
+        cout << str << " adalah palindrome." << endl;
+    } else {
+        cout << str << " bukan palindrome." << endl;
     }
-    cout << "]" << endl;
-
     return 0;
 }
