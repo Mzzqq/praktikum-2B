@@ -1,81 +1,83 @@
 #include <iostream>
 #include <cstring>
-
 using namespace std;
 
-// Definisikan struktur Queue
-struct Queue {
-    char data;
-    Queue* next;
-};
+ 
+char stack[20];		        // stack untuk menampung karakter dari string
+char queue[20];			    // queue untuk menampung karakter dari string
+int top = 0;			    // inisialisasi top dengan nilai 0
+int front = -1, rear = -1;	// inisialisasi front dan rear dengan nilai -1
 
-// Fungsi enqueue untuk menambahkan elemen ke dalam queue
-void enqueue(Queue** rear, Queue** front, char data) {
-    // Buat node baru
-    Queue* newNode = new Queue;
-    newNode->data = data;
-    newNode->next = NULL;
-
-    // Jika queue kosong, node baru akan menjadi node pertama dan terakhir
-    if (*rear == NULL) {
-        *rear = newNode;
-        *front = newNode;
-    } else {
-        // Jika tidak kosong, tambahkan node baru ke ujung rear
-        (*rear)->next = newNode;
-        *rear = newNode;
+// fungsi untuk menambahkan karakter ke dalam stack
+void pushCharacter (char ch){
+    top++;
+    stack[top] = ch;
+} 
+ 
+// fungsi untuk menambahkan karakter ke dalam queue
+void enqueueCharacter (char ch){
+    if (front == -1){
+        front = rear = 0;
+        queue[rear] = ch;
+    }else{
+        rear++;
+        queue[rear] = ch;
     }
 }
 
-// Fungsi dequeue untuk menghapus elemen dari queue dan mengembalikan data yang dihapus
-char dequeue(Queue** front) {
-    if (*front == NULL) {
-        return '\0'; // Jika queue kosong, kembalikan karakter null
-    }
-
-    char data = (*front)->data;
-    Queue* temp = *front;
-    *front = (*front)->next;
-    delete temp;
-
-    return data;
-}
-
-// Fungsi is_palindrome untuk memeriksa apakah sebuah string merupakan palindrome
-bool isPalindrome(string str) {
-    Queue* rear = NULL;
-    Queue* front = NULL;
-
-    // Masukkan setengah dari string ke dalam queue
-    for (int i = 0; i < str.length() / 2; i++) {
-        enqueue(&rear, &front, str[i]);
-    }
-
-    // Jika panjang string ganjil, lewati karakter tengahnya
-    if (str.length() % 2 != 0) {
-        dequeue(&front);
-    }
-
-    // Bandingkan karakter di queue dengan karakter di sisa string
-    while (front != NULL) {
-        if (dequeue(&front) != str[str.length() - 1]) {
-            return false;
-        }
-        str.pop_back(); // Hapus karakter terakhir dari string
-    }
-
-    return true;
-}
-
-int main() {
-    string str;
-    cout << "Masukkan string: ";
-    cin >> str;
+// fungsi untuk mengambil karakter dari stack
+char popCharacter (){
+    char p;
+    p = stack[top];
+    top--;
     
-    if (isPalindrome(str)) {
-        cout << str << " adalah palindrome." << endl;
-    } else {
-        cout << str << " bukan palindrome." << endl;
+    return p;
+
+}
+
+// fungsi untuk mengambil karakter dari queue
+char dequeueCharacter (){
+    char d;
+    d = queue[front];
+    front++;
+    
+    return d;
+}
+
+int main (){
+    // membaca string s dari input
+    string s;
+    cout << "Masukkan string: ";
+    getline (cin, s);
+    
+    // menambahkan setiap karakter dari string s ke dalam stack dan queue
+    for (int i = 0; i < s.length (); i++){
+        pushCharacter (s[i]);
+        enqueueCharacter (s[i]);
+    } 
+
+    bool isPalindrome = true;
+  
+  
+    //mengambil karakter teratas dari stack dan mengambil karakter pertama dari queue. lalu membandingkan kedua karakter tersebut. 
+
+    for (int i = 0; i < s.length () / 2; i++){
+        if (popCharacter () != dequeueCharacter ()){
+            isPalindrome = false;
+            break;
+            
+        }
+        
     }
+  
+    // menampilkan apakah string s merupakan palindrome atau tidak
+    if (isPalindrome){
+        cout << s << ", adalah palindrome.";
+        
+    }else{
+        cout << s << ", bukan palindrome.";
+        
+    }
+    
     return 0;
 }
