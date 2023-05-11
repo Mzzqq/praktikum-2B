@@ -51,7 +51,7 @@ Node* buildTree(){
         Node* curNode = q.front();
         q.pop();
 
-        cout << "Masukkan nilai left child dari " << curNode->data << " (-1 Jika tidak punya left subtree): ";
+        cout << "Masukkan nilai left child dari " << curNode->data << " (-1 Jika tidak punya left child): ";
         int leftData;
         cin >> leftData;
         if(leftData != -1)
@@ -61,7 +61,7 @@ Node* buildTree(){
             q.push(leftChild);
         }
 
-        cout << "Masukkan nilai right child dari " << curNode->data << " (-1 Jika tidak punya right subtree): ";
+        cout << "Masukkan nilai right child dari " << curNode->data << " (-1 Jika tidak punya right child): ";
         int rightData;
         cin >> rightData;
         if(rightData != -1)
