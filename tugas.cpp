@@ -1,46 +1,84 @@
+#include <bits/stdc++.h>
 #include <iostream>
 
 using namespace std;
 
-int compress(char* chars, int n) {
-    int i = 0; // pointer untuk menunjuk karakter yang sedang diproses
-    int j = 0; // pointer untuk menunjuk posisi hasil kompresi yang akan ditulis
-    int count; // jumlah kemunculan karakter yang sedang diproses
+// BT Node
+struct Node{
+    int data;
+    struct Node* left, *right;
+};
 
-    while (i < n) {
-        chars[j] = chars[i]; // tulis karakter yang sedang diproses pada posisi hasil kompresi
-        count = 1; // reset jumlah kemunculan karakter
-        while (i + 1 < n && chars[i] == chars[i+1]) { // hitung kemunculan karakter
-            count++;
-            i++;
-        }
-        if (count > 1) { // jika kemunculan karakter lebih dari 1, tambahkan angka setelah karakter
-            string count_str = to_string(count);
-            for (int k = 0; k < count_str.length(); k++) {
-                chars[++j] = count_str[k];
-            }
-        }
-        i++;
-        j++;
-    }
+// Function untuk mencari batas kedalam dalam binary tree
+int minDepth(Node *root){
+    if (root == NULL) // jika node kosong
+        return 0;
 
-    return j; // kembalikan panjang array hasil kompresi
+    if (root->left == NULL && root->right == NULL) // jika node leaf
+    return 1;
+
+    int l = INT_MAX, r = INT_MAX;
+
+    if (root->left) // rekursi pada left subtree
+    l = minDepth(root->left);
+
+    if (root->right) // rekursi pada right subtree 
+    r = minDepth(root->right);
+
+    return min(l , r) + 1; // return nilai minimum kedalaman subtree + 1
 }
 
-int main() {
-    char chars[] = {'a', 'a', 'b', 'b', 'c', 'c', 'c'};
-    int n = sizeof(chars) / sizeof(chars[0]);
+// Function untuk membuat binary tree baru
+Node *newNode(int data){
+    Node *temp = new Node;
+    temp->data = data;
+    temp->left = temp->right = NULL;
+    return (temp);
+}
 
-    int len = compress(chars, n);
+// Function untuk membuat binary tree berdasarkan input user
+Node* buildTree(){
+    int data;
+    cout << "Masukkan nilai root nya: ";
+    cin >> data;
+    Node* root = newNode(data);
 
-    cout << "Output: " << len << ", [";
-    for (int i = 0; i < len; i++) {
-        cout << "\"" << chars[i] << "\"";
-        if (i < len-1) {
-            cout << ",";
+    queue<Node*> q;
+    q.push(root);
+
+    while(!q.empty())
+    {
+        Node* curNode = q.front();
+        q.pop();
+
+        cout << "Masukkan nilai left child dari " << curNode->data << " (-1 Jika tidak punya left subtree): ";
+        int leftData;
+        cin >> leftData;
+        if(leftData != -1)
+        {
+            Node* leftChild = newNode(leftData);
+            curNode->left = leftChild;
+            q.push(leftChild);
+        }
+
+        cout << "Masukkan nilai right child dari " << curNode->data << " (-1 Jika tidak punya right subtree): ";
+        int rightData;
+        cin >> rightData;
+        if(rightData != -1)
+        {
+            Node* rightChild = newNode(rightData);
+            curNode->right = rightChild;
+            q.push(rightChild);
         }
     }
-    cout << "]" << endl;
 
+    return root;
+}
+
+// Main Program
+int main()
+{
+    Node* root = buildTree();
+    cout <<"\nBatas kedalaman binary tree adalah: "<< minDepth(root);
     return 0;
 }
