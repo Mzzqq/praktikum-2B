@@ -1,84 +1,102 @@
-#include <bits/stdc++.h>
 #include <iostream>
 
 using namespace std;
 
-// BT Node
-struct Node{
-    int data;
-    struct Node* left, *right;
+// Binary Tree Node
+struct Node {
+    int val; // value
+    Node* left; // left child
+    Node* right; // right child
+    
+    // constructor
+    // menginisialisasi node dengan value v, left child dan right child null
+    Node(int v) {
+        val = v;
+        left = nullptr;
+        right = nullptr;
+    }
 };
 
-// Function untuk mencari batas kedalam dalam binary tree
-int minDepth(Node *root){
-    if (root == NULL) // jika node kosong
-        return 0;
+// membuat binary tree dari input user
+Node* buildTree() {
+    int val;
+    cout << "Masukkan nilai root: ";
+    cin >> val;
 
-    if (root->left == NULL && root->right == NULL) // jika node leaf
-    return 1;
-
-    int l = INT_MAX, r = INT_MAX;
-
-    if (root->left) // rekursi pada left subtree
-    l = minDepth(root->left);
-
-    if (root->right) // rekursi pada right subtree 
-    r = minDepth(root->right);
-
-    return min(l , r) + 1; // return nilai minimum kedalaman subtree + 1
-}
-
-// Function untuk membuat binary tree baru
-Node *newNode(int data){
-    Node *temp = new Node;
-    temp->data = data;
-    temp->left = temp->right = NULL;
-    return (temp);
-}
-
-// Function untuk membuat binary tree berdasarkan input user
-Node* buildTree(){
-    int data;
-    cout << "Masukkan nilai root nya: ";
-    cin >> data;
-    Node* root = newNode(data);
-
-    queue<Node*> q;
-    q.push(root);
-
-    while(!q.empty())
-    {
-        Node* curNode = q.front();
-        q.pop();
-
-        cout << "Masukkan nilai left child dari " << curNode->data << " (-1 Jika tidak punya left child): ";
-        int leftData;
-        cin >> leftData;
-        if(leftData != -1)
-        {
-            Node* leftChild = newNode(leftData);
-            curNode->left = leftChild;
-            q.push(leftChild);
+    // jika input -1, maka node tersebut null
+    Node* root = new Node(val);
+    Node* nodes[1000]; 
+    nodes[0] = root;
+    int front = 0, rear = 0;
+    
+    // menggunakan BFS untuk membangun binary tree
+    while (front <= rear) {
+        Node* curr = nodes[front];
+        int left_val, right_val;
+        cout << "Masukkan nilai left child dari " << curr->val << " (atau -1 jika NULL): ";
+        cin >> left_val;
+        
+        // jika input -1, maka node tersebut null
+        if (left_val != -1) {
+            curr->left = new Node(left_val);
+            nodes[++rear] = curr->left;
         }
 
-        cout << "Masukkan nilai right child dari " << curNode->data << " (-1 Jika tidak punya right child): ";
-        int rightData;
-        cin >> rightData;
-        if(rightData != -1)
-        {
-            Node* rightChild = newNode(rightData);
-            curNode->right = rightChild;
-            q.push(rightChild);
+        cout << "Masukkan nilai right child dari " << curr->val << " (atau -1 jika NULL): ";
+        cin >> right_val;
+        
+        // jika input -1, maka node tersebut null
+        if (right_val != -1) {
+            curr->right = new Node(right_val);
+            nodes[++rear] = curr->right;
         }
+        front++; // menggeser ke node selanjutnya
     }
-
     return root;
 }
 
-// Main Program
-int main()
-{
+
+// fungsi untuk mencari minimum depth dari binary tree
+int minDepth(Node* root) {
+    if (!root) return 0; // jika root null, maka depth 0
+
+    Node* nodes[1000];
+    int depths[1000];
+    int front = 0, rear = 0;
+    nodes[rear] = root;
+    depths[rear] = 1; 
+    
+    // menggunakan BFS untuk mencari minimum depth
+    while (front <= rear) {
+        Node* curr = nodes[front];
+        int depth = depths[front];
+        front++; // menggeser ke node selanjutnya
+        
+        // jika node merupakan leaf, maka return depth
+        if (!curr->left && !curr->right) {
+            return depth;
+        }
+
+        // jika bukan leaf, maka tambahkan depth dan node child ke queue
+        if (curr->left) {
+            nodes[++rear] = curr->left;
+            depths[rear] = depth + 1;
+        }
+
+        // jika bukan leaf, maka tambahkan depth dan node child ke queue
+        if (curr->right) {
+            nodes[++rear] = curr->right;
+            depths[rear] = depth + 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
     Node* root = buildTree();
-    cout <<"\nBatas kedalaman binary tree adalah: "<< minDepth(root);
+
+    int min_depth = minDepth(root);
+    cout << "depth minimum dari binary tree: " << min_depth << endl;
+
     return 0;
 }
